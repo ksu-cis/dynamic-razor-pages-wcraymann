@@ -22,7 +22,7 @@ namespace Movies.Pages
         /// <summary>
         /// The MPAA ratings for the Movie search form on the Index page of the Cowboy CAfe website.
         /// </summary>
-        public string[] MPAARatings { get; set; }
+        public string[] MPAARatings { get; set; } = {"G"};
 
         /// <summary>
         /// The Major Genres for the Movie search form on the Index page of the Cowboy CAfe website.
@@ -63,11 +63,69 @@ namespace Movies.Pages
             this.RotTomMin = RotTomMin;
             this.RotTomMax = RotTomMax;
             this.SearchTerms = SearchTerms;
-            Movies = MovieDatabase.Search(SearchTerms);
-            Movies = MovieDatabase.FilterByMPAARating(Movies, MPAARatings);
-            Movies = MovieDatabase.FilterByMajorGenre(Movies, MajorGenres);
-            Movies = MovieDatabase.FilterByIMDBRating(Movies, IMDBMin, IMDBMax);
-            Movies = MovieDatabase.FilterByRottenTomatoe(Movies, RotTomMin, RotTomMax);
+            // Movies = MovieDatabase.Search(SearchTerms);
+            // Movies = MovieDatabase.FilterByMPAARating(Movies, MPAARatings);
+            // Movies = MovieDatabase.FilterByMajorGenre(Movies, MajorGenres);
+            // Movies = MovieDatabase.FilterByIMDBRating(Movies, IMDBMin, IMDBMax);
+            // Movies = MovieDatabase.FilterByRottenTomatoe(Movies, RotTomMin, RotTomMax);
+
+            Movies = MovieDatabase.All;
+
+            // Search for movies with SearchTerms.
+            if (SearchTerms != null)
+            {
+                Movies = MovieDatabase.All.Where(movie => movie.Title != null && movie.Title.Contains(SearchTerms,
+                         StringComparison.InvariantCultureIgnoreCase));
+            }
+            /*
+            // Search for movies with SearchTerms.
+            if (SearchTerms != null)
+            {
+                Movies = from movie in Movies
+                    where movie.Title != null && movie.Title.Contains(SearchTerms,
+                    StringComparison.InvariantCultureIgnoreCase)
+                    select movie;
+            }
+            */
+            // Search for movies with MPAARatings.
+            if (MPAARatings != null && MPAARatings.Length != 0)
+            {
+                Movies = MovieDatabase.All.Where(movie => movie.Title != null && MPAARatings.Contains(movie.MPAARating));
+            }
+
+            // Search for movies with MajorGenres.
+            if (MajorGenres != null && MajorGenres.Length != 0)
+            {
+                Movies = MovieDatabase.All.Where(movie => movie.Title != null && MajorGenres.Contains(movie.MajorGenre));
+            }
+
+            // Search for movies with IMDBMin.
+            if (IMDBMin != null)
+            {
+                Movies = MovieDatabase.All.Where(movie => movie.Title != null && movie.IMDBRating != null 
+                                                 && movie.IMDBRating >= IMDBMin);
+            }
+
+            // Search for movies with IMDBMax.
+            if (IMDBMax != null)
+            {
+                Movies = MovieDatabase.All.Where(movie => movie.Title != null && movie.IMDBRating != null
+                                                 && movie.IMDBRating <= IMDBMax);
+            }
+
+            // Search for movies with RotTomMin.
+            if (RotTomMin != null)
+            {
+                Movies = MovieDatabase.All.Where(movie => movie.Title != null && movie.RottenTomatoesRating != null
+                                                 && movie.RottenTomatoesRating >= RotTomMin);
+            }
+
+            // Search for movies with RotTomMax.
+            if (RotTomMax != null)
+            {
+                Movies = MovieDatabase.All.Where(movie => movie.Title != null && movie.RottenTomatoesRating != null
+                                                 && movie.RottenTomatoesRating <= RotTomMax);
+            }
         }
     }
 }
